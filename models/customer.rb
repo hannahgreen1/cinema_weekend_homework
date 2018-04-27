@@ -41,8 +41,19 @@ class Customer
     WHERE tickets.customer_id = $1"
     values = [@id]
     film_hashes = SqlRunner.run(sql, values)
-    films = film_hashes.map { |film_hases| Film.new(film_hashes) }
+    films = film_hashes.map { |film_hashes| Film.new(film_hashes) }
     return films
+  end
+
+  def buy_ticket
+    film_array = self.film()
+    films = film_array.each { |film| @funds -= film.price}
+    self.update()
+    
+  end
+
+  def tickets_bought
+
   end
 
   def self.delete_all()
