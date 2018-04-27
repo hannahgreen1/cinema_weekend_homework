@@ -20,6 +20,7 @@ class Customer
     customer = SqlRunner.run(sql, values).first
     @id = customer['id'].to_i
   end
+
   def delete()
     sql = "DELETE FROM customers WHERE id = $1"
     values = [@id]
@@ -30,6 +31,18 @@ class Customer
     sql = "UPDATE customers SET (name, funds) = ($1, $2) WHERE id = $3"
     values = [@name, @funds, @id]
     SqlRunner.run(sql, values)
+  end
+
+  def film()
+    sql = "SELECT films.*
+    FROM films
+    INNER JOIN tickets
+    ON tickets.film_id = films.id
+    WHERE tickets.customer_id = $1"
+    values = [@id]
+    film_hashes = SqlRunner.run(sql, values)
+    films = film_hashes.map { |film_hases| Film.new(film_hashes) }
+    return films
   end
 
   def self.delete_all()
