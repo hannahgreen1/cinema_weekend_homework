@@ -59,4 +59,9 @@ class Film
   def self.map_all(results, class_)
     results.map{|result_hash| class_.new(result_hash)}
   end
+
+  def customer_number
+    return customer.count
+  end
+  
 end
