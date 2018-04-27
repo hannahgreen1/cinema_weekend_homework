@@ -1,4 +1,5 @@
 require_relative("../db/sql_runner")
+require_relative("ticket")
 
 class Customer
   attr_reader :id
@@ -47,13 +48,11 @@ class Customer
 
   def buy_ticket
     film_array = self.film()
-    films = film_array.each { |film| @funds -= film.price}
+    film_array.each do |film| @funds -= film.price
     self.update()
-    
-  end
-
-  def tickets_bought
-
+    new_ticket = Ticket.new({ 'customer_id' => @id, 'film_id' => film.id})
+    new_ticket.save
+    end
   end
 
   def self.delete_all()
@@ -69,6 +68,15 @@ class Customer
 
   def self.map_all(results, class_)
     results.map{|result_hash| class_.new(result_hash)}
+  end
+
+  def tickets()
+    sql = "SELECT tickets.*
+    FROM tickets
+    WHERE tickets.customer_id = $1"
+    values = [@id]
+    tickets = SqlRunner.run(sql, values)
+    return tickets.count
   end
 
 end
